@@ -1,33 +1,71 @@
 #!/usr/bin/env perl
-
+our $APP = 'reddit-wallpaper';
+our $VERSION = '0.8.2';
 use strict;
 use warnings;
 
 use File::Basename;
+use Getopt::Long;
 
-my $OUTPUT_DIRECTORY = "$ENV{HOME}/Pictures/Wallpapers";
-my @subreddits = <DATA>;
+my $output_prefix;
+my $subreddit;
+my $cache_image;
+$cache_image = $ENV{REDDIT_WALLPAPER_CACHE} if defined $ENV{REDDIT_WALLPAPER_CACHE};
 
+GetOptions(
+	"output=s" => \$output_prefix,
+	"subreddit=s" => \$subreddit,
+	"cache!" => \$cache_image,
+	"version" => sub { printf "%s v%s\n", $APP, $VERSION; exit }
+) or die $!;
+
+# Apply defaults
+if (not defined $output_prefix) {
+	$output_prefix = $ENV{REDDIT_WALLPAPER_OUTPUT} if defined $ENV{REDDIT_WALLPAPER_OUTPUT};
+	$output_prefix = "/tmp/reddit-wallpaper-$$-" unless defined $output_prefix;
+}
+$output_prefix = $output_prefix . (-d $output_prefix ? "/" : "");
+$subreddit = get_random_subreddit() unless defined $subreddit;
+
+# Main
+my $image = get_background($subreddit, $output_prefix);
+set_background($image);
+remove_background($image) unless $cache_image;
+
+# Subrutines
 sub get_background {
-	chomp(my $subreddit = $subreddits[rand @subreddits]);
-	my $html = `wget -q -O - https://www.reddit.com/r/$subreddit`;
-	my @images = $html =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
-	my $image_path = $images[rand @images];
-
+	my ($subreddit, $output_prefix) = @_;
+	my $image_path = get_random_image($subreddit);
 	my $image_name = sprintf "%s-%s", $subreddit, basename($image_path);
-	my $output_path = "$OUTPUT_DIRECTORY/$image_name";
+	my $output_path = sprintf "%s%s", $output_prefix, $image_name;
 
-	system("wget $image_path -O $output_path") unless -f "$output_path";
+	system("wget '$image_path' -O '$output_path'") unless -f $output_path;
 
 	return $output_path;
 }
 sub set_background {
 	my ($background) = @_;
-	qx/ feh --bg-fill $background /;
+	qx/ feh --bg-fill '$background' /;
+}
+sub remove_background {
+	my ($background) = @_;
+	unlink $background;
 }
 
-set_background(get_background());
+# Utils
+sub get_random_image {
+	my ($subreddit) = @_;
 
+	my $html = `wget -q -O - 'https://www.reddit.com/r/$subreddit'`;
+	my @images = $html =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
+	return $images[rand @images];
+}
+sub get_random_subreddit {
+	my @subreddits = <DATA>;
+	chomp(my $subreddit = $subreddits[rand @subreddits]);
+	chomp $subreddit;
+	return $subreddit;
+}
 __DATA__
 AbandonedPorn
 AerialPorn
