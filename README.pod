@@ -1,0 +1,58 @@
+=pod
+
+=head1 NAME
+
+reddit-wallpaper - Fetch an image from reddit and set it as desktop background
+
+=head1 SYNOPSIS
+
+clipbored [OPTIONS]
+
+=head1 DESCRIPTION
+
+B<reddit-wallpaper> will fetch a random image from reddit.com ether from a specified
+subreddit or a random selected from a list of SFW Porn subreddit.
+
+=head1 OPTIONS
+
+  -o, --output    output directory/prefix, if a directory is provided '/' will be appended
+  -s, --subreddit alternative subreddit to fetch the image from
+  -h, --help      display this help and exit
+  -m, --man       display the manual
+  -v, --version   output version information and exit
+
+=head1 REQUIREMENTS
+
+B<reddit-wallpaper> requires B<wget> and B<feh>
+
+=head1 ENVIRONMENT
+
+You can set the following environment variables:
+
+I<REDDIT_WALLPAPER_OUTPUT> set default output directory/prefix
+
+I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line seperated list of subreddits
+
+I<REDDIT_WALLPAPER_CACHE> set default cache policy
+
+=head1 AUTHOR
+
+Andreas Louv
+aalouv@gmail.com
+http://ginkoms.dk
+
+=head1 REPORTING BUGS
+
+Report bugs to L<aalouv@gmail.com> or L<use the issue tracker|https://github.com/ginkoms/reddit-wallpaper/issues>.
+
+reddit-wallpaper homepage: L<https://github.com/ginkoms/reddit-wallpaper>
+
+=head1 COPYRIGHT
+
+Copyright 2016 the B<reddit-wallpaper>s L</AUTHOR> as listed above
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=cut
