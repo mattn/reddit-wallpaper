@@ -1,0 +1,66 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use File::Basename;
+
+my $OUTPUT_DIRECTORY = "$ENV{HOME}/Pictures/Wallpapers";
+my @subreddits = <DATA>;
+
+sub get_background {
+	chomp(my $subreddit = $subreddits[rand @subreddits]);
+	my $html = `wget -q -O - https://www.reddit.com/r/$subreddit`;
+	my @images = $html =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
+	my $image_path = $images[rand @images];
+
+	my $image_name = sprintf "%s-%s", $subreddit, basename($image_path);
+	my $output_path = "$OUTPUT_DIRECTORY/$image_name";
+
+	system("wget $image_path -O $output_path") unless -f "$output_path";
+
+	return $output_path;
+}
+sub set_background {
+	my ($background) = @_;
+	qx/ feh --bg-fill $background /;
+}
+
+set_background(get_background());
+
+__DATA__
+AbandonedPorn
+AerialPorn
+AmateurEarthPorn
+AnimalPorn
+ApocalypsePorn
+AutumnPorn
+BeachPorn
+BotanicalPorn
+CityPorn
+DesertPorn
+DestructionPorn
+EarthPorn
+ExposurePorn
+FractalPorn
+HellscapePorn
+InfraredPorn
+InfrastructurePorn
+LakePorn
+LavaPorn
+MachinePorn
+MacroPorn
+MegalithPorn
+OrganizationPorn
+PolicePorn
+RuralPorn
+SeaPorn
+SkyPorn
+SpaceFlightPorn
+SpacePorn
+SpringPorn
+SummerPorn
+VillagePorn
+WaterPorn
+WeatherPorn
+WinterPorn
