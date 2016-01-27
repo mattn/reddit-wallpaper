@@ -23,7 +23,7 @@ subreddit or a random selected from a list of SFW Porn subreddit.
 
 =head1 REQUIREMENTS
 
-B<reddit-wallpaper> requires B<wget> and B<feh>
+B<reddit-wallpaper> requires B<HTTP::Tiny> and B<feh>
 
 =head1 ENVIRONMENT
 

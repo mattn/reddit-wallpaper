@@ -68,6 +68,8 @@ use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
 
+use HTTP::Tiny;
+
 my $output_prefix;
 my $subreddit;
 my $cache_image;
@@ -102,7 +104,15 @@ sub get_background {
 	my $image_name = sprintf "%s-%s", $subreddit, basename($image_path);
 	my $output_path = sprintf "%s%s", $output_prefix, $image_name;
 
-	system("wget '$image_path' -O '$output_path'") unless -f $output_path;
+	my $response = HTTP::Tiny->new->get("$image_path");
+	if (!$response->{success}) {
+		printf STDERR "%s, %s\n%s", $response->{status}, $response->{reason}, $response->{content};
+		exit 1;
+	}
+
+	open my $fh, ">:raw", "$output_path" or die $!;
+	print $fh $response->{content};
+	close $fh;
 
 	return $output_path;
 }
@@ -119,8 +129,12 @@ sub remove_background {
 sub get_random_image {
 	my ($subreddit) = @_;
 
-	my $html = `wget -q -O - 'https://www.reddit.com/r/$subreddit'`;
-	my @images = $html =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
+	my $response = HTTP::Tiny->new->get("https://www.reddit.com/r/$subreddit");
+	if (!$response->{success}) {
+		printf STDERR "%s, %s\n%s", $response->{status}, $response->{reason}, $response->{content};
+		exit 1;
+	}
+	my @images = $response->{content} =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
 	return $images[rand @images];
 }
 sub get_random_subreddit {
