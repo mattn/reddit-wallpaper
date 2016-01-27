@@ -7,6 +7,7 @@ use Getopt::Long;
 use Pod::Usage;
 
 use HTTP::Tiny;
+use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
 our $VERSION = '0.8.3';
@@ -59,7 +60,7 @@ sub get_background {
 }
 sub set_background {
 	my ($background) = @_;
-	qx/ feh --bg-fill '$background' /;
+	set_wallpaper($background);
 }
 sub remove_background {
 	my ($background) = @_;
@@ -109,7 +110,7 @@ subreddit or a random selected from a list of SFW Porn subreddit.
 
 =head1 REQUIREMENTS
 
-B<reddit-wallpaper> requires B<HTTP::Tiny> and B<feh>
+B<reddit-wallpaper> requires B<HTTP::Tiny> and B<X11::Wallpaper>
 
 =head1 ENVIRONMENT
 
