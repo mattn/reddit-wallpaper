@@ -10,11 +10,11 @@ use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
-our $VERSION = '0.8.5';
+our $VERSION = '0.8.6';
 
 my $output_prefix;
 my $subreddit;
-my $bg_mode = 'center';
+my $bg_mode = 'full';
 my $cache_image;
 $cache_image = $ENV{REDDIT_WALLPAPER_CACHE} if defined $ENV{REDDIT_WALLPAPER_CACHE};
 
