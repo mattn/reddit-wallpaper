@@ -5,6 +5,7 @@ use warnings;
 use File::Basename;
 use Getopt::Long;
 use Pod::Usage;
+use List::MoreUtils qw/apply/;
 
 use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
@@ -97,7 +98,7 @@ sub get_random_image {
 	push @images, $content =~ m{(https?://?i.imgur.com/\w+.(?:jpg|png))}g;
 	#   Apply replace 'imgur' with 'i.imgur' and append '.jpg' at the end:
 	#     imgur.com/$image
-	push @images, map { s/(imgur.*)$/i.$1.jpg/; $_ } $content =~ m{(https?:\/\/imgur.com/\w+)};
+	push @images, apply { s/(imgur.*)$/i.$1.jpg/ } $content =~ m{(https?:\/\/imgur.com/\w+)};
 
 	die "$subreddit: $!" unless @images;
 	return $images[rand @images];
