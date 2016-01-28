@@ -10,19 +10,29 @@ use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
-our $VERSION = '0.8.4';
+our $VERSION = '0.8.5';
 
 my $output_prefix;
 my $subreddit;
+my $bg_mode = 'center';
 my $cache_image;
 $cache_image = $ENV{REDDIT_WALLPAPER_CACHE} if defined $ENV{REDDIT_WALLPAPER_CACHE};
 
 GetOptions(
 	"output=s" => \$output_prefix,
 	"subreddit=s" => \$subreddit,
+	"mode=s" => sub {
+		shift;
+		my ($mode) = @_;
+		if ($mode !~ /^(full|tile|center|aspect)$/) {
+			pod2usage(-verbose => 1);
+			exit 1;
+		}
+		$bg_mode = $mode;
+	},
 	"cache!" => \$cache_image,
 	"help" => sub { pod2usage(-verbose => 1); exit },
-	"man" => sub { pod2usage(-verbose => 3); exit },
+	"m|man" => sub { pod2usage(-verbose => 3); exit },
 	"version" => sub { printf "%s v%s\n", $APP, $VERSION; exit }
 ) or exit 1;
 
@@ -60,7 +70,9 @@ sub get_background {
 }
 sub set_background {
 	my ($background) = @_;
-	set_wallpaper($background);
+	set_wallpaper($background, (
+		mode => $bg_mode
+	));
 }
 sub remove_background {
 	my ($background) = @_;
@@ -104,6 +116,7 @@ subreddit or a random selected from a list of SFW Porn subreddit.
 
   -o, --output    output directory/prefix, if a directory is provided '/' will be appended
   -s, --subreddit alternative subreddit to fetch the image from
+      --mode      may be 'full' (default), 'tile', 'center' or 'aspect'
   -h, --help      display this help and exit
   -m, --man       display the manual
   -v, --version   output version information and exit
@@ -121,6 +134,18 @@ I<REDDIT_WALLPAPER_OUTPUT> set default output directory/prefix
 I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line seperated list of subreddits
 
 I<REDDIT_WALLPAPER_CACHE> set default cache policy
+
+=head1 MODE
+
+I<full> fullscreen, stretched to fit - the default
+
+I<tile> tiling image from top left corner
+
+I<center> do not stretch
+
+I<aspect> fullscreen, preserving aspect ratio
+
+For the latter two options, the background for any borders around the image is set to black.
 
 =head1 AUTHOR
 
