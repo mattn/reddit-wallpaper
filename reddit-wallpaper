@@ -88,7 +88,18 @@ sub get_random_image {
 		printf STDERR "%s, %s\n%s", $response->{status}, $response->{reason}, $response->{content};
 		exit 1;
 	}
-	my @images = $response->{content} =~ /(https?:\/\/?i.imgur.com\/\w+.(?:jpg|png))/g or die "$subreddit: $!";
+	my $content = $response->{content};
+	# Match the following:
+	# Leading 'http://' or 'https://'
+	my @images;
+	#   i.imgur.com/$image.jpg
+	#   i.imgur.com/$image.png
+	push @images, $content =~ m{(https?://?i.imgur.com/\w+.(?:jpg|png))}g;
+	#   Apply replace 'imgur' with 'i.imgur' and append '.jpg' at the end:
+	#     imgur.com/$image
+	push @images, map { s/(imgur.*)$/i.$1.jpg/; $_ } $content =~ m{(https?:\/\/imgur.com/\w+)};
+
+	die "$subreddit: $!" unless @images;
 	return $images[rand @images];
 }
 sub get_random_subreddit {
