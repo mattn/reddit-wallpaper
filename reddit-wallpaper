@@ -154,7 +154,7 @@ You can set the following environment variables:
 
 I<REDDIT_WALLPAPER_OUTPUT> set default output directory/prefix
 
-I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line seperated list of subreddits
+I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line separated list of subreddits
 
 I<REDDIT_WALLPAPER_CACHE> set default cache policy
 
