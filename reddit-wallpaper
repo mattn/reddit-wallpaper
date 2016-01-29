@@ -11,7 +11,7 @@ use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
-our $VERSION = '0.8.7';
+our $VERSION = '0.8.8';
 
 my $output_prefix;
 my $subreddit;
@@ -104,11 +104,22 @@ sub get_random_image {
 	return $images[rand @images];
 }
 sub get_random_subreddit {
-	my @subreddits = <DATA>;
+	my @subreddits = get_subreddits();
 	chomp(my $subreddit = $subreddits[rand @subreddits]);
 	chomp $subreddit;
 	return $subreddit;
 }
+sub get_subreddits {
+	my @subreddits;
+	if (defined $ENV{REDDIT_WALLPAPER_SUBREDDITS}) {
+		local @ARGV = ($ENV{REDDIT_WALLPAPER_SUBREDDITS});
+		@subreddits = <>;
+	}
+	@subreddits = <DATA> unless @subreddits;
+
+	return @subreddits;
+}
+
 =pod
 
 =head1 NAME
