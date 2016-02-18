@@ -15,12 +15,14 @@ subreddit or a random selected from a list of SFW Porn subreddit.
 
 =head1 OPTIONS
 
-  -o, --output    output directory/prefix, if a directory is provided '/' will be appended
-  -s, --subreddit alternative subreddit to fetch the image from
-      --mode      may be 'full', 'tile', 'center' or 'aspect' (default)
-  -h, --help      display this help and exit
-  -m, --man       display the manual
-  -v, --version   output version information and exit
+  -o, --output         output directory/prefix, if a directory is provided '/' will be appended
+  -s, --subreddit      alternative subreddit to fetch the image from
+      --mode           may be 'full', 'tile', 'center' or 'aspect' (default)
+  -c, --cache          enable image caching
+      --no-cache       disabling image caching, even though REDDIT_WALLPAPER_CACHE is set
+  -h, --help           display this help and exit
+  -m, --man            display the manual
+  -v, --version        output version information and exit
 
 =head1 REQUIREMENTS
 
