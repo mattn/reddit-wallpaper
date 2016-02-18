@@ -20,6 +20,8 @@ subreddit or a random selected from a list of SFW Porn subreddit.
       --mode           may be 'full', 'tile', 'center' or 'aspect' (default)
   -c, --cache          enable image caching
       --no-cache       disabling image caching, even though REDDIT_WALLPAPER_CACHE is set
+  -a, --always-new     always fetch a new image (never seen before), this only works if '--cache' is set
+      --no-always-new  never check for existence of image
   -h, --help           display this help and exit
   -m, --man            display the manual
   -v, --version        output version information and exit
@@ -37,6 +39,8 @@ I<REDDIT_WALLPAPER_OUTPUT> set default output directory/prefix
 I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line separated list of subreddits
 
 I<REDDIT_WALLPAPER_CACHE> set default cache policy
+
+I<REDDIT_WALLPAPER_ALWAYS_NEW> set default for I<--alway-new>
 
 =head1 MODE
 

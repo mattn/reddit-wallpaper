@@ -11,12 +11,16 @@ use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
-our $VERSION = '0.8.9';
+our $VERSION = '0.8.10';
+
+my $MAX_FETCH_TIMES = 5;
 
 my $output_prefix;
 my $subreddit;
 my $bg_mode = 'aspect';
 my $cache_image;
+my $always_new_image;
+$always_new_image = $ENV{REDDIT_WALLPAPER_ALWAYS_NEW} if defined $ENV{REDDIT_WALLPAPER_ALWAYS_NEW};
 $cache_image = $ENV{REDDIT_WALLPAPER_CACHE} if defined $ENV{REDDIT_WALLPAPER_CACHE};
 
 GetOptions(
@@ -32,6 +36,7 @@ GetOptions(
 		$bg_mode = $mode;
 	},
 	"cache!" => \$cache_image,
+	"always-new!" => \$always_new_image,
 	"help" => sub { pod2usage(-verbose => 1); exit },
 	"m|man" => sub { pod2usage(-verbose => 3); exit },
 	"version" => sub { printf "%s v%s\n", $APP, $VERSION; exit }
@@ -52,10 +57,13 @@ remove_background($image) unless $cache_image;
 
 # Subrutines
 sub get_background {
+	top:
+	my $times = 0;
 	my ($subreddit, $output_prefix) = @_;
 	my $image_path = get_random_image($subreddit);
 	my $image_name = sprintf "%s-%s", $subreddit, basename($image_path);
 	my $output_path = sprintf "%s%s", $output_prefix, $image_name;
+	goto top if $times++ < $MAX_FETCH_TIMES && -f $output_path;
 
 	my $response = HTTP::Tiny->new->get("$image_path");
 	if (!$response->{success}) {
@@ -142,6 +150,8 @@ subreddit or a random selected from a list of SFW Porn subreddit.
       --mode           may be 'full', 'tile', 'center' or 'aspect' (default)
   -c, --cache          enable image caching
       --no-cache       disabling image caching, even though REDDIT_WALLPAPER_CACHE is set
+  -a, --always-new     always fetch a new image (never seen before), this only works if '--cache' is set
+      --no-always-new  never check for existence of image
   -h, --help           display this help and exit
   -m, --man            display the manual
   -v, --version        output version information and exit
@@ -159,6 +169,8 @@ I<REDDIT_WALLPAPER_OUTPUT> set default output directory/prefix
 I<REDDIT_WALLPAPER_SUBREDDITS> should point to a file with a line separated list of subreddits
 
 I<REDDIT_WALLPAPER_CACHE> set default cache policy
+
+I<REDDIT_WALLPAPER_ALWAYS_NEW> set default for I<--alway-new>
 
 =head1 MODE
 
