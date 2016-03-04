@@ -11,7 +11,7 @@ use HTTP::Tiny;
 use X11::Wallpaper qw/set_wallpaper/;
 
 our $APP = 'reddit-wallpaper';
-our $VERSION = '0.8.10';
+our $VERSION = '0.8.11';
 
 my $MAX_FETCH_TIMES = 5;
 
@@ -20,6 +20,8 @@ my $subreddit;
 my $bg_mode = 'aspect';
 my $cache_image;
 my $always_new_image;
+my $verbose;
+
 $always_new_image = $ENV{REDDIT_WALLPAPER_ALWAYS_NEW} if defined $ENV{REDDIT_WALLPAPER_ALWAYS_NEW};
 $cache_image = $ENV{REDDIT_WALLPAPER_CACHE} if defined $ENV{REDDIT_WALLPAPER_CACHE};
 
@@ -39,6 +41,7 @@ GetOptions(
 	"always-new!" => \$always_new_image,
 	"help" => sub { pod2usage(-verbose => 1); exit },
 	"m|man" => sub { pod2usage(-verbose => 3); exit },
+	"v|verbose!" => \$verbose,
 	"version" => sub { printf "%s v%s\n", $APP, $VERSION; exit }
 ) or exit 1;
 
@@ -65,7 +68,8 @@ sub get_background {
 	my $output_path = sprintf "%s%s", $output_prefix, $image_name;
 	goto top if $times++ < $MAX_FETCH_TIMES && -f $output_path;
 
-	my $response = HTTP::Tiny->new->get("$image_path");
+	my $response = HTTP::Tiny->new->get($image_path);
+	printf "Fetching: '%s'\n", $image_path if $verbose;
 	if (!$response->{success}) {
 		printf STDERR "%s, %s\n%s", $response->{status}, $response->{reason}, $response->{content};
 		exit 1;
@@ -104,11 +108,12 @@ sub get_random_image {
 	#   i.imgur.com/$image.jpg
 	#   i.imgur.com/$image.png
 	push @images, $content =~ m{(https?://?i.imgur.com/\w+.(?:jpg|png))}g;
-	#   Apply replace 'imgur' with 'i.imgur' and append '.jpg' at the end:
+	#   'Apply' will replace 'imgur' with 'i.imgur' and append '.jpg' at the end:
 	#     imgur.com/$image
 	push @images, apply { s/(imgur.*)$/i.$1.jpg/ } $content =~ m{(https?:\/\/imgur.com/\w+)};
 
 	die "$subreddit: $!" unless @images;
+	printf "Using subreddit: '%s'\n", $subreddit if $verbose;
 	return $images[rand @images];
 }
 sub get_random_subreddit {
@@ -154,7 +159,8 @@ subreddit or a random selected from a list of SFW Porn subreddit.
       --no-always-new  never check for existence of image
   -h, --help           display this help and exit
   -m, --man            display the manual
-  -v, --version        output version information and exit
+  -v  --verbose        be verbose
+      --version        output version information and exit
 
 =head1 REQUIREMENTS
 

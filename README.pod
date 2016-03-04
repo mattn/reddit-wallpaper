@@ -24,7 +24,8 @@ subreddit or a random selected from a list of SFW Porn subreddit.
       --no-always-new  never check for existence of image
   -h, --help           display this help and exit
   -m, --man            display the manual
-  -v, --version        output version information and exit
+  -v  --verbose        be verbose
+      --version        output version information and exit
 
 =head1 REQUIREMENTS
 
