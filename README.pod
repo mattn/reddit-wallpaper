@@ -61,9 +61,9 @@ Andreas Louv
 
 =head1 REPORTING BUGS
 
-Report bugs to L<use the issue tracker|https://github.com/ginkoms/reddit-wallpaper/issues>.
+Report bugs to L<use the issue tracker|https://github.com/andlrc/reddit-wallpaper/issues>.
 
-reddit-wallpaper homepage: L<https://github.com/ginkoms/reddit-wallpaper>
+reddit-wallpaper homepage: L<https://github.com/andlrc/reddit-wallpaper>
 
 =head1 COPYRIGHT
 
